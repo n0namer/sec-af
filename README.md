@@ -246,27 +246,6 @@ af call sec-af.audit --in '{"repo_url": "https://github.com/dolevf/Damn-Vulnerab
 
 New to AgentField? Install the control plane first with `curl -fsSL https://agentfield.ai/install.sh | bash`, or use the Docker / Railway options below.
 
-To install the Python node deliberately, clone this repository and install the
-checkout as a local path. Local-path installs do not follow `superseded_by`:
-
-```bash
-git clone https://github.com/Agent-Field/sec-af
-af install ./sec-af
-```
-
-### Go implementation
-
-The maintained node lives under [`go/`](go/README.md), and installing the bare
-repository URL gives you this implementation as `sec-af` on its default port
-`8013` — no Python environment is provisioned on that path. It registers the
-same reasoners under the same names and draws the same control-plane DAG. The
-Python implementation remains available through `python -m sec_af.app`, the root
-Docker Compose stack, or the local-path install escape hatch (`git clone` then
-`af install ./sec-af`). The Go add-on Compose file
-(`docker-compose.go.yml`) uses the node id `sec-af-go` only so both
-implementations can run against one control plane during a changeover. Build,
-run, and Docker/compose docs live in [`go/README.md`](go/README.md).
-
 ### One-Click Deploy (Railway)
 
 [![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/deploy/sec-af)
