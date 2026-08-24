@@ -238,7 +238,7 @@ af install https://github.com/Agent-Field/sec-af
 af run sec-af
 ```
 
-`af install` follows the repository manifest to the maintained Go package and registers it as the `sec-af` node with your control plane. If an older Python `sec-af` is installed, it is replaced in place, retaining the same node id, triggers, and node-scoped secrets. On first `af run` you're prompted for the required `OPENROUTER_API_KEY` — stored encrypted and reused across every node, so you enter it only once. Then run an audit:
+`af install` clones the repo, provisions an isolated Python environment, and registers the `sec-af` node with your control plane. On first `af run` you're prompted for the required `OPENROUTER_API_KEY` — stored encrypted and reused across every node, so you enter it only once. Then run an audit:
 
 ```bash
 af call sec-af.audit --in '{"repo_url": "https://github.com/dolevf/Damn-Vulnerable-GraphQL-Application"}'
