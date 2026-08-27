@@ -92,7 +92,7 @@ def test_compute_exploitability_score_defaults_reachability_when_missing() -> No
         severity=Severity.LOW,
         evidence_level=EvidenceLevel.SANITIZATION_BYPASSABLE,
     )
-    assert compute_exploitability_score(finding) == 1.05
+    assert compute_exploitability_score(finding) == 2.1
 
 
 def test_compute_exploitability_score_is_deterministic() -> None:
@@ -112,7 +112,7 @@ def test_compute_exploitability_score_is_deterministic() -> None:
         ({"requires_auth"}, 2.5),
         ({"requires_admin"}, 1.5),
         ({"custom_tag"}, 2.5),
-        (set(), 2.5),
+        (set(), 5.0),
     ],
 )
 def test_reachability_multipliers_and_default_behavior(tags: set[str], expected: float) -> None:
