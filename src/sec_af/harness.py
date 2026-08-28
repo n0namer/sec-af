@@ -148,23 +148,21 @@ def _with_file_write_hint(prompt: str, cwd: str) -> str:
 def _build_schema_retry_prompt(schema: type[SchemaT], error_detail: str, cwd: str) -> str:
     """Build a retry prompt that includes the full schema JSON definition.
 
-    This ensures the model can see exactly what schema it needs to conform to,
-    improving retry success rates when schema validation fails.
+    The AgentField SDK owns the schema output path. Keep retries path-agnostic
+    so the prompt cannot conflict with the SDK-provided isolated output path.
     """
-    output_path = Path(cwd) / ".agentfield_output.json"
-
     # Get the JSON schema from the Pydantic model
     schema_json = schema.model_json_schema()
     schema_json_str = json.dumps(schema_json, indent=2)
 
     return (
-        f"The JSON output at {output_path} failed validation.\n"
+        "The previous structured output failed validation.\n"
         f"Error: {error_detail}\n\n"
         f"Your response must conform to this JSON schema:\n"
         f"```json\n{schema_json_str}\n```\n\n"
-        f"Rewrite the COMPLETE, corrected JSON to: {output_path}\n"
-        f"The file must contain ONLY valid JSON matching the schema above. "
-        f"No markdown fences, no extra text, no comments."
+        "Rewrite the COMPLETE, corrected JSON to the SDK-provided output path.\n"
+        "The file must contain ONLY valid JSON matching the schema above. "
+        "No markdown fences, no extra text, no comments."
     )
 
 
