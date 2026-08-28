@@ -121,11 +121,14 @@ def _with_phase_guidance(prompt: str, phase: str | None, cwd: str) -> str:
         "Prefer explicit evidence over speculation, and clearly separate confirmed facts from uncertainty.",
     )
 
-    constraints = (
-        "Constraints:\n"
-        "- Use evidence-first reasoning; do not speculate beyond available artifacts.\n"
-        "- Keep analysis bounded to the task scope and produce only schema-conformant output.\n"
-        "- Cite concrete repository evidence whenever making security-relevant claims."
+    constraints = _with_file_write_hint(
+        (
+            "Constraints:\n"
+            "- Use evidence-first reasoning; do not speculate beyond available artifacts.\n"
+            "- Keep analysis bounded to the task scope and produce only schema-conformant output.\n"
+            "- Cite concrete repository evidence whenever making security-relevant claims."
+        ),
+        cwd,
     )
 
     return (
@@ -148,21 +151,23 @@ def _with_file_write_hint(prompt: str, cwd: str) -> str:
 def _build_schema_retry_prompt(schema: type[SchemaT], error_detail: str, cwd: str) -> str:
     """Build a retry prompt that includes the full schema JSON definition.
 
-    The AgentField SDK owns the schema output path. Keep retries path-agnostic
-    so the prompt cannot conflict with the SDK-provided isolated output path.
+    This ensures the model can see exactly what schema it needs to conform to,
+    improving retry success rates when schema validation fails.
     """
+    output_path = Path(cwd) / ".agentfield_output.json"
+
     # Get the JSON schema from the Pydantic model
     schema_json = schema.model_json_schema()
     schema_json_str = json.dumps(schema_json, indent=2)
 
     return (
-        "The previous structured output failed validation.\n"
+        f"The JSON output at {output_path} failed validation.\n"
         f"Error: {error_detail}\n\n"
         f"Your response must conform to this JSON schema:\n"
         f"```json\n{schema_json_str}\n```\n\n"
-        "Rewrite the COMPLETE, corrected JSON to the SDK-provided output path.\n"
-        "The file must contain ONLY valid JSON matching the schema above. "
-        "No markdown fences, no extra text, no comments."
+        f"Rewrite the COMPLETE, corrected JSON to: {output_path}\n"
+        f"The file must contain ONLY valid JSON matching the schema above. "
+        f"No markdown fences, no extra text, no comments."
     )
 
 
