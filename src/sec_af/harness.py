@@ -121,14 +121,11 @@ def _with_phase_guidance(prompt: str, phase: str | None, cwd: str) -> str:
         "Prefer explicit evidence over speculation, and clearly separate confirmed facts from uncertainty.",
     )
 
-    constraints = _with_file_write_hint(
-        (
-            "Constraints:\n"
-            "- Use evidence-first reasoning; do not speculate beyond available artifacts.\n"
-            "- Keep analysis bounded to the task scope and produce only schema-conformant output.\n"
-            "- Cite concrete repository evidence whenever making security-relevant claims."
-        ),
-        cwd,
+    constraints = (
+        "Constraints:\n"
+        "- Use evidence-first reasoning; do not speculate beyond available artifacts.\n"
+        "- Keep analysis bounded to the task scope and produce only schema-conformant output.\n"
+        "- Cite concrete repository evidence whenever making security-relevant claims."
     )
 
     return (
